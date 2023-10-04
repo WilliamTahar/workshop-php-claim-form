@@ -2,7 +2,52 @@
 $errors = [];
 
 // TODO 3 - Get the data from the form and check for errors
+if (isset($_POST['companyName']) && isset($_POST['name']) && isset($_POST['email']) && isset($_POST['contactMessage']) && isset($_POST['contactName'])) {
+    $companyName = htmlentities($_POST['companyName']);
+    $name = htmlentities($_POST['name']);
+    $email =  htmlentities($_POST['email']);
+    $contactMessage = htmlentities($_POST['contactMessage']);
+    $contactName = htmlentities($_POST['contactName']);
 
+    if (empty($companyName)) {
+        $errors[] = 'CompanyName is require !';
+    }
+    if (empty($name)) {
+        $errors[] = 'Name is require !';
+    }
+    if (empty($email)) {
+        $errors[] = 'email is require !';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'Email filed must be an EMAIL ! ';
+    }
+    if (strlen($contactMessage) < 30) {
+        $errors[] = 'Message too short (minimum 30 char) !';
+    }
+
+
+    $contactTab = [
+        ['name' => 'andy', 'img' => 'andy.webp'],
+        ['name' => 'dwight', 'img' => 'dwight.webp'],
+        ['name' => 'jim', 'img' => 'jim.webp'],
+        ['name' => 'phyllis', 'img' => 'phyllis.webp'],
+        ['name' => 'stanley', 'img' => 'stanley.webp']
+    ];
+
+    foreach ($contactTab as $row) {
+        if ($row['name'] === $contactName) {
+            $contactImage = $row['img'];
+            break;
+        }
+    }
+
+    if (empty($contactImage)) {
+        $errors[] = 'Contact not found ... ';
+    }
+
+} else {
+    $errors[] = 'Invalid form !';
+//    array_push($errors, 'Invalid form !');
+}
 
 if (!empty($errors)) {
     require 'error.php';
@@ -32,23 +77,18 @@ if (!empty($errors)) {
     <div class="summary">
         <!-- BONUS -->
         <p>
-            <img src="images/placeholder.png" alt="">
+            <img src="images/<?= $contactImage ?>" alt="">
             <span>Votre vendeur</span>
         </p>
 
 
         <!-- TODO 2 - Replace those placeholders by the values sent from the form -->
         <ul>
-            <li>Votre entreprise : <span>Dunder Mifflin</span></li>
-            <li>Votre nom : <span>Mickael Scott</span></li>
-            <li>Votre email : <span>mickael.scott@dundermifflin.com</span></li>
+            <li>Votre entreprise : <span><?= $companyName ?></span></li>
+            <li>Votre nom : <span><?= $name ?></span></li>
+            <li>Votre email : <span><?= $email ?></span></li>
             <li>Votre message :
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Provident facere, tempora possimus aspernatur excepturi
-                    incidunt dolores illo dicta similique harum mollitia enim
-                    voluptates delectus? Repellendus inventore molestiae a
-                    accusamus deleniti?
-                </p>
+                <p><?= $contactMessage ?></p>
             </li>
         </ul>
     </div>
